@@ -10,3 +10,6 @@ Filed per Standing Rules. Claude Code: update this file every session.
 - [ ] Owner: DNS check.opendiabetic.com → 5090 rig edge
 - [ ] Reply to gavigtl5678@gmail.com once cloud lane is public
 - [ ] U7: decide HEIC handling — iOS exports JPEG (preferred) OR add pillow-heif to QC gate
+- [ ] Harvest Stream B: iOS donation consent screen (explicit, settings-revocable) — collector dormant until shipped
+- [ ] Harvest: wire Stream A aggregate() to a scheduled job reading audit JSONL → golden-set priority feed
+- [ ] Harvest: RJP scorer hook (reviewer-assigned or judge-model score) before assemble_pair
