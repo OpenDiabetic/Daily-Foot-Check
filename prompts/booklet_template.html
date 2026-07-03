@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page { size: Letter; margin: 0; }
+  :root{
+    --propolis:#201711; --propolis-2:#170F09; --wax:#F5EEDF; --paper:#FDFAF2;
+    --honey:#E9A63C; --comb:#B5771D; --amber:#FFC96B; --ink:#2A2119;
+    --ink-soft:#5C5245; --sage:#4E7A64; --mono:'SF Mono',ui-monospace,Menlo,monospace;
+    --zone-green:#4E7A64; --zone-yellow:#C9922A; --zone-red:#A84A32;
+  }
+  @font-face{ font-family:'Fraunces';
+    src:local('Fraunces'),local('Georgia'); font-weight:600; }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-family:'Atkinson Hyperlegible','Helvetica Neue',sans-serif;color:var(--ink);background:var(--paper);font-size:15px;line-height:1.62}
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif}
+  .page{width:8.5in;height:11in;position:relative;overflow:hidden;page-break-after:always}
+  .page:last-child{page-break-after:auto}
+
+  /* ---------- COVER ---------- */
+  .cover{background:var(--propolis);color:var(--wax);padding:0.9in 0.85in;display:flex;flex-direction:column}
+  .cover .brand{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);font-weight:700}
+  .cover .fg-num{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;color:#B8A98E;margin-top:4px}
+  .cover .hero{margin-top:2.6in;flex:1}
+  .cover h1{font-size:3.1rem;line-height:1.04;color:var(--wax);max-width:9ch}
+  .cover .sub{margin-top:0.32in;font-size:1.05rem;color:#D8CCB8;max-width:30ch}
+  .cover .mark{position:absolute;top:2.1in;right:0.85in;width:1.5in;height:1.5in;
+    background:radial-gradient(circle,rgba(233,166,60,.28),transparent 68%)}
+  .cover .mark svg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:0.8in}
+  .cover .meta{display:flex;gap:1.4in;border-top:1px solid #4A3B26;padding-top:0.22in;margin-top:0.3in}
+  .cover .meta .k{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:var(--honey);font-weight:700}
+  .cover .meta .v{font-size:.92rem;color:var(--wax);margin-top:3px}
+  .cover .disc{font-size:.66rem;color:#8A7A5F;margin-top:auto;padding-top:0.3in}
+
+  /* ---------- CONTENT ---------- */
+  .content{padding:0.85in 0.85in 1.1in}
+  .zone{margin-bottom:0.4in;page-break-inside:avoid}
+  .zone .band{display:flex;align-items:baseline;gap:0.16in;border-bottom:2px solid var(--honey);padding-bottom:8px;margin-bottom:0.16in}
+  .zone .ord{font-family:var(--mono);font-size:.82rem;color:var(--honey);font-weight:700}
+  .zone h2{font-size:1.28rem;color:var(--ink);text-transform:uppercase;letter-spacing:.02em}
+  .zone .maps{margin-left:auto;font-size:.6rem;color:var(--ink-soft);font-style:italic}
+  .zone p{color:var(--ink);font-size:.98rem;margin-bottom:0.1in}
+  .zone .pull{font-family:'Fraunces',Georgia,serif;font-size:1.1rem;color:var(--comb);
+    border-left:3px solid var(--amber);padding-left:0.18in;margin:0.14in 0;font-weight:600}
+
+  /* ---------- COLOPHON ---------- */
+  .colophon{background:var(--propolis-2);color:var(--wax);padding:0.7in 0.85in}
+  .colophon .lbl{font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--honey);font-weight:700}
+  .colophon h3{font-family:'Fraunces',Georgia,serif;font-size:1.3rem;color:var(--wax);margin:6px 0 0.24in}
+  .prov{width:100%;border-collapse:collapse;font-size:.74rem}
+  .prov td{border-top:1px solid #3A2E1E;padding:9px 8px;vertical-align:top;color:#D8CCB8}
+  .prov .claim{color:var(--wax);width:46%}
+  .prov .src{width:38%}
+  .prov .strength{font-family:var(--mono);font-size:.66rem;color:var(--amber);text-align:right}
+  .colophon .foot{margin-top:0.34in;border-top:1px solid #3A2E1E;padding-top:0.16in;font-size:.66rem;color:#8A7A5F}
+  .colophon .foot .hash{font-family:var(--mono);color:#B8A98E;word-break:break-all}
+  .colophon .cooked{font-family:var(--mono);font-size:.6rem;color:var(--honey);letter-spacing:.1em;margin-top:8px}
+</style>
+</head>
+<body>
+
+  <!-- COVER -->
+  <section class="page cover">
+    <div>
+      <div class="brand">OpenDiabetic · The Digital Foot Lab</div>
+      <div class="fg-num">FIELD GUIDE {{GUIDE_NUM}}</div>
+    </div>
+    <div class="mark">
+      <svg viewBox="0 0 220 440" xmlns="http://www.w3.org/2000/svg">
+        <path d="M60 165C55 120 75 100 110 98C145 96 168 115 172 150C176 185 170 215 166 250C162 285 160 315 158 345C156 385 130 405 108 405C86 405 66 388 66 352C66 320 80 300 84 268C88 240 72 205 60 165Z" fill="#E9A63C"/>
+        <ellipse cx="72" cy="62" rx="20" ry="24" fill="#E9A63C"/>
+        <ellipse cx="106" cy="50" rx="13" ry="15" fill="#E9A63C"/>
+        <ellipse cx="132" cy="54" rx="12" ry="14" fill="#E9A63C"/>
+        <ellipse cx="154" cy="62" rx="11" ry="13" fill="#E9A63C"/>
+        <ellipse cx="172" cy="74" rx="9" ry="11" fill="#E9A63C"/>
+      </svg>
+    </div>
+    <div class="hero">
+      <h1 class="serif">{{TITLE}}</h1>
+      <div class="sub">{{SUBTITLE}}</div>
+    </div>
+    <div class="meta">
+      <div><div class="k">Cadence</div><div class="v">{{CADENCE}}</div></div>
+      <div><div class="k">Version</div><div class="v">{{VERSION}}</div></div>
+      <div><div class="k">Reviewed</div><div class="v">{{REVIEWED}}</div></div>
+    </div>
+    <div class="disc">Educational monitoring — not a medical device. It never diagnoses.</div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="page">
+    <div class="content">
+      {{SECTIONS}}
+    </div>
+  </section>
+
+  <!-- COLOPHON -->
+  <section class="page colophon">
+    <div class="lbl">Provenance · every claim sourced</div>
+    <h3>Where this guide comes from</h3>
+    <table class="prov">
+      {{PROVENANCE}}
+    </table>
+    <div class="foot">
+      <div class="hash">draft&nbsp;sha256&nbsp;·&nbsp;{{DRAFT_HASH}}</div>
+      <div style="margin-top:6px">{{DISCLAIMER}}</div>
+      <div class="cooked">OPENDIABETIC · FIELD GUIDE {{GUIDE_NUM}} · {{TITLE_UPPER}} · {{VERSION}} · COOKED BY {{WRITER_MODEL}}</div>
+    </div>
+  </section>
+
+</body>
+</html>

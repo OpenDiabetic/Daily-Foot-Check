@@ -16,11 +16,13 @@ NEVER renders to a distributable. The draft's provenance + disclaimer travel
 with every artifact — booklet colophon, video end-card, graph node metadata.
 
 ## The five renderers (all read the same GuideDraft fields)
-1. **Booklet / one-pager (Claude Design):** sections → spreads; pull_quotes →
-    display callouts; Hive Calm tokens (propolis/wax/honey, Fraunces +
-    Atkinson Hyperlegible). Large-type, screen-reader-sane, high contrast —
-    the audience has elevated low-vision rates. Every piece ends on the
-    disclaimer. Output PDF/PNG via canvas-design or Claude Design.
+1. **Booklet / one-pager:** EXECUTABLE via `app/authoring/booklet.py`
+    (`render_booklet(published_draft) -> PDF bytes`, Playwright/Chromium,
+    in-RAM). Hive Calm house template (`prompts/booklet_template.html`):
+    cover + zone sections + provenance colophon. Ordinals DERIVED from
+    `booklet_render()` (never literals). Published-only + content-gate
+    re-assert before render. Large-type Atkinson Hyperlegible + Fraunces,
+    high contrast for the low-vision audience. Endpoint: POST /v1/booklet.
 2. **Short-form video:** video_beats → vertical 30–60s. on_screen_text is the
     caption track (always-on captions, not optional — accessibility + silent
     autoplay). voiceover is the script. b_roll_hint guides footage (own

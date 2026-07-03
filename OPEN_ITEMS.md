@@ -13,3 +13,6 @@ Filed per Standing Rules. Claude Code: update this file every session.
 - [ ] Harvest Stream B: iOS donation consent screen (explicit, settings-revocable) — collector dormant until shipped
 - [ ] Harvest: wire Stream A aggregate() to a scheduled job reading audit JSONL → golden-set priority feed
 - [ ] Harvest: RJP scorer hook (reviewer-assigned or judge-model score) before assemble_pair
+- [ ] Booklet: Dockerfile needs `playwright install chromium` + deps (ms-playwright cache) — add to image build
+- [ ] Booklet: content page pagination headroom — 5 dense sections nearly fill one page; add page-break flow for longer guides
+- [ ] Booklet: bundle Atkinson Hyperlegible + Fraunces as @font-face files (currently local/Georgia fallback in container)

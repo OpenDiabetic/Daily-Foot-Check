@@ -93,6 +93,33 @@ async def transparency() -> dict:
     }
 
 
+@app.post("/v1/booklet")
+async def booklet(package: str = Form(...)) -> Response:
+    """Render a PUBLISHED GuideDraft to a print-ready booklet PDF, in RAM.
+    Enforces published-only + wellness content gate before rendering."""
+    from app.authoring.booklet import RenderRejected, render_booklet
+    from app.schemas.guide_draft import GuideDraft
+
+    try:
+        draft = GuideDraft.model_validate_json(package)
+    except Exception as exc:
+        raise HTTPException(400, f"Invalid guide draft: {exc}") from exc
+
+    try:
+        pdf_bytes = await render_booklet(draft)
+    except RenderRejected as exc:
+        raise HTTPException(409, str(exc)) from exc
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{draft.guide_id}-booklet.pdf"',
+            "X-Draft-SHA256": draft.draft_sha256(),
+        },
+    )
+
+
 @app.post("/v1/care-package")
 async def care_package(
     request: Request,

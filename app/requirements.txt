@@ -9,3 +9,5 @@ python-multipart==0.0.*
 cryptography>=43
 reportlab==4.*
 textstat
+pytest-asyncio
+playwright
