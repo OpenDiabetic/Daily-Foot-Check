@@ -1,8 +1,9 @@
 # Dependencies / build
 node_modules/
-dist/
 build/
 .cache/
+# NOTE: dist/ios/ is TRACKED on purpose — it holds the generated iOS QC constants
+# checked by invariant #5 (regenerate + git diff --exit-code). Do not ignore dist/.
 
 # Local / secrets
 .env
