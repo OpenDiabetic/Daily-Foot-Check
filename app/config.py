@@ -30,6 +30,23 @@ class Settings(BaseSettings):
     qc_max_brightness: float = _QC["max_brightness"]
     qc_luma_downscale_max_side: int = _QC["luma_downscale_max_side"]
 
+    # guide writer — Qwen3.6-35B-A3B (apache-2.0, MoE 35B/3B-active, multimodal,
+    # 262K ctx) + foot-guide LoRA on PRO 6000, :8093.
+    # Card-official Instruct/non-thinking sampling: temp 0.7, top_p 0.80,
+    # top_k 20, min_p 0, presence 1.5, repetition 1.0. We nudge temp to 0.6 for
+    # authoring determinism; guided_json owns structure so presence 1.5 is safe.
+    writer_base_url: str = "http://guidewriter:8000/v1"
+    writer_model_id: str = "Qwen/Qwen3.6-35B-A3B"    # + LoRA adapter once trained
+    writer_lora_name: str = ""
+    writer_temperature: float = 0.6
+    writer_top_p: float = 0.80
+    writer_top_k: int = 20
+    writer_min_p: float = 0.0
+    writer_presence_penalty: float = 1.5
+    writer_repetition_penalty: float = 1.0
+    writer_timeout_s: float = 180.0
+    writer_prompt_path: Path = Path(__file__).parent.parent / "prompts" / "guide_writer_v1.txt"
+
     # anchoring
     anchor_enabled: bool = False           # flip on in prod
     anchor_flush_seconds: int = 86_400     # daily batch
@@ -48,6 +65,14 @@ class Settings(BaseSettings):
     @property
     def prompt_sha256(self) -> str:
         return hashlib.sha256(self.prompt_text.encode()).hexdigest()
+
+    @property
+    def writer_prompt_text(self) -> str:
+        return self.writer_prompt_path.read_text()
+
+    @property
+    def writer_prompt_sha256(self) -> str:
+        return hashlib.sha256(self.writer_prompt_text.encode()).hexdigest()
 
 
 @lru_cache

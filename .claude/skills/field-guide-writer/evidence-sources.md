@@ -6,6 +6,10 @@
 - ADA Standards of Care in Diabetes (current year) — foot-care section.
 ## Tier B — supporting
 - NICE NG19 (diabetic foot problems), national podiatry bodies.
+- The Foot Selfie (Swerdlow, Armstrong et al., J Diabetes Sci Technol, 2023) —
+  patients can photograph their own feet incl. soles at diagnostic quality;
+  documents caught healing / reversal of pre-ulcerative lesions. Use for
+  photo-history guides (FG-002).
 ## Provenance block (attach to every draft)
 claims:
   - claim: "wash and dry feet daily, especially between the toes"

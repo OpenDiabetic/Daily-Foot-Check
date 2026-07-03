@@ -1,0 +1,40 @@
+# GuideWriter — Qwen3.6-35B-A3B (apache-2.0, MoE 35B/3B-active) on RTX PRO 6000, :8093
+# Constrained JSON authoring, served NON-THINKING via enable_thinking=False
+# per-request (Qwen3.6 has NO /think soft switch).
+services:
+  guidewriter:
+    image: vllm/vllm-openai:latest      # requires vLLM >= 0.19.0 for Qwen3.6
+    command: >
+      --model Qwen/Qwen3.6-35B-A3B
+      --served-model-name Qwen/Qwen3.6-35B-A3B
+      --language-model-only
+      --gpu-memory-utilization 0.55
+      --max-model-len 32768
+      --enable-lora
+      --max-lora-rank 64
+      --disable-log-requests
+      --port 8000
+    # --language-model-only: skip the vision encoder + multimodal profiling to
+    #   free VRAM for KV cache — correct for TEXT authoring. Drop this flag if
+    #   you later feed reference images to ground visual guides (FG-003).
+    # We deliberately OMIT --reasoning-parser qwen3 (that enables thinking-trace
+    #   parsing). Non-thinking is enforced per-request.
+    # Optional MTP speedup once stable in your vLLM build (~240 tok/s on RTX 6000):
+    #   --speculative-config '{"method":"qwen3_next_mtp","num_speculative_tokens":2}'
+    environment:
+      - HUGGING_FACE_HUB_TOKEN=${HF_TOKEN}
+      - CUDA_VISIBLE_DEVICES=0
+    volumes:
+      - hf-cache:/root/.cache/huggingface
+      - ./loras:/loras:ro
+    tmpfs: [/tmp]
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+volumes:
+  hf-cache:
