@@ -9,3 +9,6 @@ Filed per Standing Rules. Claude Code: update this file every session.
 - [ ] Owner: bench hardware — ZimaCube 2 Creator Pack + ZimaBoard 2 (5–7 day ship)
 - [ ] Owner: DNS check.opendiabetic.com → 5090 rig edge
 - [ ] Reply to gavigtl5678@gmail.com once cloud lane is public
+
+## Found + fixed (landing session, 2026-07-03)
+- [x] `tools/codegen_qc.py` embedded a wall-clock timestamp in the generated Swift, so invariant #5's gate (`regenerate + git diff --exit-code`) always false-failed. Removed the `// Generated:` stamp → codegen is now deterministic (proven: two regenerations byte-identical).

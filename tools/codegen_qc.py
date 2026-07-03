@@ -7,7 +7,6 @@ CI:     regenerate and `git diff --exit-code`  # drift between JSON and Swift = 
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent.parent
@@ -17,7 +16,6 @@ OUT = ROOT / "dist" / "ios" / "QCConstants.swift"
 TEMPLATE = """// GENERATED FILE — do not edit.
 // Source of truth: shared/qc_constants.json (version {version})
 // Regenerate: python3 tools/codegen_qc.py
-// Generated: {stamp}
 //
 // Parity rule: SentinelCapture's on-device gate MUST pass/fail identically to
 // app/qc/gate.py on the golden image set. Same constants, same verdicts.
@@ -40,7 +38,7 @@ def main() -> None:
     c = json.loads(SRC.read_text())
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(
-        TEMPLATE.format(stamp=datetime.now(timezone.utc).isoformat(), **{
+        TEMPLATE.format(**{
             k: v for k, v in c.items() if not k.startswith("_")
         })
     )
