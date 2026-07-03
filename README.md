@@ -1,109 +1,106 @@
-<!-- 🦶 Daily Foot Check -->
+# footcheck-node v0.1
 
-# 🦶 Daily Foot Check
+OpenDiabetic Foot Check — image in, educational report out, **nothing retained**.
+One container stack that runs identically on the swarmrails 5090 rig (cloud lane)
+or a user's own GPU box (sovereign lane).
 
-**The 5-minute daily habit that could save your feet — as a free, local-first web app that runs anywhere.**
+```
+iPhone / web capture
+  → QC gate (blur/light/resolution — rejects before GPU spend)
+  → MedGemma 1.5 4B via vLLM (single-shot, temperature 0, guided_json)
+  → server-derived attention tier (model has NO vote on tier)
+  → Bee: FTS5 → Field Guide routing
+  → FootCheckReport JSON  +  X-Report-SHA256 header
+  → daily Merkle batch → Hedera HCS  +  RFC 3161 countersign (dual anchor)
+```
 
-Part of [OpenDiabetic — The Digital Foot Lab](https://opendiabetic.com). Open it, do the daily check, and it keeps *your* history on *your* device so you can notice change day to day.
-
-![local-first](https://img.shields.io/badge/local--first-yes-2FB67A) ![no data stored](https://img.shields.io/badge/data-never%20leaves%20your%20device-D99A2B) ![runs on the edge](https://img.shields.io/badge/runs%20on-a%20Raspberry%20Pi-3D9BE9) ![license](https://img.shields.io/badge/license-MIT-blue)
-
----
-
-## The promises (our defendable values)
-
-- **🔒 No data stored — anywhere but your device.** No account, no sign-in, no server database, no uploads. Your photos and history live in *your* browser, on *your* machine. We can't see them, because we never receive them.
-- **🩺 It never diagnoses.** Educational monitoring only. It helps you *notice* change and decide when to involve your care team — early. It is **not a medical device**.
-- **📟 Runs anywhere.** Pure static files — no backend, no GPU, no cloud, no dependencies. Serve it from a Raspberry Pi, a mini PC, an old laptop, or your phone.
-- **🛠️ Run it yourself.** Don't trust us — host your own. That's a **Foot Check Node** (below).
-
----
-
-## Quick start (30 seconds)
-
-Clone it, serve the folder with any static web server, open it in a browser:
+## Quickstart (5090 rig)
 
 ```bash
-git clone https://github.com/SudoSuOps/Daily-Foot-Check.git
-cd Daily-Foot-Check
-
-# pick ONE:
-python3 -m http.server 8080          # Python (built in everywhere)
-npx serve .                          # Node
-docker compose up                    # containerized (see below)
+cp .env.example .env            # add HF_TOKEN (accept HAI-DEF terms on HF first)
+docker compose up -d --build    # first boot pulls ~8GB of weights
+curl -k https://localhost/healthz
+curl -k -F "image=@foot.jpg" https://localhost/v1/check
 ```
 
-Then open **http://localhost:8080** — and, if you like, tap your browser's *"Add to Home Screen"* to run it like an app.
+## Zero-retention, enforced not promised
 
-> **Camera note:** the browser camera only works in a *secure context* — that means `http://localhost` (fine) or `https://…`. Opening over a plain LAN IP (`http://192.168.x.x`) will block the camera. To use it from your phone against a **Foot Check Node**, serve it over HTTPS (see below).
+| Layer | Mechanism |
+|---|---|
+| Process | image handled as `bytes`, never written |
+| Container | `read_only: true`, `tmpfs: /tmp`, `cap_drop: ALL` |
+| vLLM | `--disable-log-requests` (image tokens never hit logs) |
+| Edge | Caddy logs strip headers + query strings; no bodies |
+| Audit | allowlisted hash-only JSONL to stdout — PII fields raise `ValueError` |
+| Proof | `tests/retention_audit.sh` → `docker diff` must be clean (CI gate) |
 
----
+## Evidence rail
 
-## 📟 Run your own Foot Check Node
+- Per-check: report hash returned to user (`X-Report-SHA256`)
+- Daily: Merkle root of all hashes → HCS topic (consumer receipt, mirror-node
+  verifiable by URL) **and** RFC 3161 token on the same root (court-native).
+- Prompt is pinned (`prompts/foot_check_v2.txt`); its sha256 rides in every
+  report and every anchor. Changing the prompt without a golden-set pass is a
+  Standing Rules violation.
 
-A **Foot Check Node** is any small box on your network — a Raspberry Pi, a ZimaBoard, a mini PC, an old laptop — that quietly serves Daily Foot Check to your household. Private, offline-capable, yours.
+Verify HCS: `GET https://mainnet.mirrornode.hedera.com/api/v1/topics/{topic}/messages`
+Verify TSR: `openssl ts -verify -digest <root> -sha256 -in <root>.tsr -CAfile tsa-chain.pem`
 
-**With Docker (recommended for a persistent node):**
+## Test
+
 ```bash
-docker compose up -d          # serves on http://<node-ip>:8080
+PYTHONPATH=. pytest tests/ -q          # contract tests (no GPU)
+API=https://localhost/v1/check ./tests/retention_audit.sh   # live stack
 ```
 
-**With HTTPS (so phones on your LAN can use the camera):**
-The included `docker-compose.yml` has a commented **Caddy** profile that issues an internal certificate:
-```bash
-docker compose --profile https up -d     # serves on https://<node-ip>
-```
-Trust the certificate once on each device, add it to your home screen, and you have a private household foot-check appliance — no cloud, no account, no data leaving the house.
-
-**Bare metal (no Docker):**
-```bash
-# any static server works; e.g. with caddy:
-caddy file-server --listen :8080 --root .
-```
-
----
-
-## How it works (the privacy architecture)
+## Layout
 
 ```
-┌─────────────────────────────┐        the Foot Check Node
-│  Your browser / your phone  │        just serves static files.
-│  • camera capture           │        It NEVER receives your photos.
-│  • compare today vs history │◀──────  index.html + app (HTML/JS/CSS)
-│  • history in IndexedDB     │
-│  • all on YOUR device       │
-└─────────────────────────────┘
+app/schemas/foot_check.py   # THE contract: closed vocab, derive_tier()
+app/qc/gate.py              # PIL+numpy quality gate
+app/inference/medgemma.py   # single-shot vLLM client, validate-retry-fail
+app/bee/retrieve.py         # in-memory FTS5 over Field Guides
+app/anchor/                 # merkle / hedera / rfc3161 / daily batcher
+app/audit/log.py            # hash-only allowlisted audit
+app/main.py                 # POST /v1/check, /transparency, /healthz
+prompts/foot_check_v2.txt   # pinned; sha256 anchored
+web/index.html              # how-it-works page w/ 3D foot
+caddy/Caddyfile             # TLS edge, body-free logs
+tests/                      # contract tests + retention audit
 ```
 
-- **No backend.** The whole app is static files. The server's only job is to hand them to your browser.
-- **Photos never upload.** Capture, comparison, and history all happen in the browser and are stored locally (IndexedDB). Clear your browser data and it's gone — because that's the only copy.
-- **Optional AI review (roadmap):** if enabled, runs on a box *you* control (your own Node), processes a photo *in memory*, returns a calm observation, and **stores nothing**.
+## Open items → OPEN_ITEMS.md
 
----
+- [ ] Create dedicated HCS topic for footcheck (separate from RJP topic)
+- [ ] Golden set: 50 adversarial images (blur / not-a-foot / shoe / cat) for
+      prompt regression before any prompt bump
+- [ ] Canary MedGemma on PRO 6000 rig GPU1 (:8092) + Caddy failover upstream
+- [ ] iOS app: point capture flow at POST /v1/check; render report card
+- [ ] Publish `opendiabetic/footlab-node` image (the sovereign-lane one-liner)
+- [ ] `/transparency` page: add live mirror-node fetch of latest anchor
+- [ ] Fetch + pin freetsa CA chain for automated `openssl ts -verify` in CI
+- [ ] Rate limiting at Caddy (e.g. 10 checks/min/IP) before public launch
 
-## What it is not
+## SENSE + VAULT (added this session)
 
-Daily Foot Check is **educational monitoring**. It does **not** diagnose, name a condition, tell you what is wrong, or replace your care team. If anything about your feet worries you — a wound that isn't healing, spreading redness or warmth, new pain or numbness — **contact your care team promptly.** In diabetic foot care, early is the entire strategy.
+- `app/schemas/context_signals.py` — wearable contract: gait asymmetry, walking
+  speed delta, wrist temp deviation, activity. `extra='forbid'`, all Optional,
+  hash-anchored. `nudge_worthy()` owns the ONLY user-facing nudge copy —
+  wellness language enforced by test (`test_copy_never_uses_symptom_language`).
+- `shared/qc_constants.json` — SINGLE SOURCE for QC thresholds. Python config
+  reads it; `tools/codegen_qc.py` emits `dist/ios/QCConstants.swift`. CI rule:
+  regenerate + `git diff --exit-code`.
+- `app/vault/store.py` — sovereign-lane encrypted history (Fernet, device
+  keyfile 0600). Joins reports+signals by day; `comparison_feed()` is the
+  MedGemma 1.5 multi-timepoint / Phase 3 ComparisonEngine input. Cloud lane has
+  no code path to it.
 
-Prefer paper? The [Daily Foot Check Field Guide](https://opendiabetic.com/guides/daily-foot-check.html) is free to read or print.
+## Care Package (send-to-care-team)
 
----
-
-## Roadmap
-
-- **v0 — foundation** *(here now)*: project, license, self-host + Foot Check Node docs, branded shell.
-- **v1 — the check**: guided daily capture, on-device history, calm day-to-day comparison — all client-side.
-- **v2 — optional on-device review**: bring-your-own-Node AI observation (in memory, stores nothing).
-- **Companion**: the native iOS app (FootLab) for the full experience.
-
-## Contributing
-
-PRs welcome — especially accessibility, translations, and edge-device packaging. Keep every change true to the promises above: **local-first, no data stored, never diagnoses.**
-
-## License
-
-**MIT** — run it, fork it, host it, share it. See [LICENSE](LICENSE). *(Not a medical device; see the notice in the license and above.)*
-
----
-
-🐝 Part of the **Swarm & Bee** family · [opendiabetic.com](https://opendiabetic.com) · build@opendiabetic.com · Jupiter, FL
+- `POST /v1/care-package` — server RENDERS (reportlab, in-RAM), only the USER
+  sends via their device share sheet. We never relay PHI.
+- Tamper gate: client echoes report JSON + hash; server re-hashes and 409s any
+  doctored report (`app/schemas/care_package.py`).
+- Photos opt-in and sha256-matched to report views — foreign images 409.
+- PDF footer prints report/prompt hashes + transparency verify pointer, so the
+  receiving clinician can confirm the document is unaltered.

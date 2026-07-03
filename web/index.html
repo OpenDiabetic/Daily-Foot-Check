@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foot Check — OpenDiabetic Digital Foot Lab</title>
+<meta name="description" content="A free, educational foot check for people with diabetes. Your photo is analyzed in memory and never stored — verify it yourself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,650&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --propolis:#201711; --propolis-2:#2B1F15;
+    --wax:#F5EEDF; --paper:#FDFAF2;
+    --honey:#E9A63C; --comb:#B5771D;
+    --sage:#4E7A64; --amber-glow:#FFC96B;
+    --ink:#2A2119; --ink-soft:#5C5245;
+    --mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Atkinson Hyperlegible',sans-serif;color:var(--ink);background:var(--paper);font-size:18px;line-height:1.6}
+  h1,h2,h3{font-family:'Fraunces',serif;font-weight:650;line-height:1.12}
+  a{color:var(--comb)}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+  .eyebrow{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--honey);font-weight:700}
+
+  /* ---------- hero ---------- */
+  .hero{background:var(--propolis);color:var(--wax);position:relative;overflow:hidden}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:32px;align-items:center;min-height:88vh;padding-top:48px;padding-bottom:48px}
+  .hero h1{font-size:clamp(2.4rem,5vw,4.1rem);color:var(--wax)}
+  .hero h1 em{font-style:normal;color:var(--honey)}
+  .hero p.lede{margin:20px 0 32px;font-size:1.15rem;color:#D8CCB8;max-width:34ch}
+  .cta-row{display:flex;gap:14px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:15px 28px;border-radius:999px;font-weight:700;font-size:1rem;text-decoration:none;border:2px solid transparent}
+  .btn-honey{background:var(--honey);color:var(--propolis)}
+  .btn-honey:hover{background:var(--amber-glow)}
+  .btn-ghost{border-color:#5C4B33;color:var(--wax)}
+  .btn-ghost:hover{border-color:var(--honey)}
+  .hero-badges{margin-top:34px;display:flex;gap:22px;flex-wrap:wrap;font-size:.85rem;color:#B8A98E}
+  .hero-badges span::before{content:"⬡ ";color:var(--honey)}
+  .scanlab{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:460px;margin:0 auto}
+  .scanpanel{background:#170F09;border:1px solid #4A3B26;border-radius:16px;padding:14px 10px 10px;text-align:center}
+  .scanlabel{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;color:var(--honey);font-weight:700}
+  .footsvg{width:100%;height:auto;max-height:400px;margin-top:6px}
+  .scancap{font-size:.78rem;color:#B8A98E;padding:4px 6px 2px}
+  .zonecap{color:var(--amber-glow)}
+  .footsvg .scanline{animation:sweep 3.8s ease-in-out infinite}
+  .scanpanel:last-child .footsvg .scanline{animation-delay:1.9s}
+  @keyframes sweep{
+    0%,100%{transform:translateY(30px);opacity:.15}
+    50%{transform:translateY(408px);opacity:1}
+  }
+  .footsvg .pzone polygon{animation:pzpulse 3.8s ease-in-out infinite 1.9s;opacity:.35}
+  @keyframes pzpulse{0%,100%{opacity:.3}55%{opacity:.95}}
+  @media (prefers-reduced-motion:reduce){
+    .footsvg .scanline{animation:none;transform:translateY(220px)}
+    .footsvg .pzone polygon{animation:none;opacity:.7}
+  }
+  .canvas-caption{text-align:center;font-size:.8rem;color:#8A7A5F;margin-top:10px}
+
+  /* ---------- steps ---------- */
+  .steps{background:var(--wax);padding:88px 0}
+  .steps h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:10px 0 46px;max-width:22ch}
+  .step-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+  .step{background:var(--paper);border:1px solid #E5DAC2;border-radius:18px;padding:30px 26px;position:relative}
+  .step .n{position:absolute;top:-16px;left:24px;background:var(--propolis);color:var(--honey);
+    width:52px;height:46px;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:1.25rem;
+    clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+  .step h3{font-size:1.3rem;margin:18px 0 10px}
+  .step p{color:var(--ink-soft);font-size:.98rem}
+  .step p b{color:var(--ink)}
+
+  /* ---------- lanes ---------- */
+  .lanes{padding:88px 0;background:var(--paper)}
+  .lanes h2{font-size:clamp(1.8rem,3.4vw,2.6rem);margin:10px 0 12px}
+  .lanes .sub{color:var(--ink-soft);max-width:58ch;margin-bottom:44px}
+  .lane-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+  .lane{border-radius:18px;padding:34px 30px}
+  .lane-local{background:var(--propolis);color:var(--wax)}
+  .lane-local h3{color:var(--honey)}
+  .lane-cloud{background:#FFF;border:1px solid #E5DAC2}
+  .lane h3{font-size:1.45rem;margin-bottom:6px}
+  .lane .tag{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;opacity:.75}
+  .lane ul{list-style:none;margin-top:18px}
+  .lane li{padding:9px 0;border-top:1px solid rgba(128,110,80,.25);font-size:.97rem}
+  .lane-local li{color:#D8CCB8}.lane-local li b{color:var(--wax)}
+  .lane-cloud li{color:var(--ink-soft)}.lane-cloud li b{color:var(--ink)}
+  .lane li::before{content:"⬡";color:var(--honey);margin-right:10px}
+
+  /* ---------- proof ---------- */
+  .proof{background:var(--propolis-2);color:var(--wax);padding:88px 0}
+  .proof h2{font-size:clamp(1.8rem,3.4vw,2.4rem);color:var(--wax);margin:10px 0 14px}
+  .proof .sub{color:#C9BBA0;max-width:60ch;margin-bottom:38px}
+  .chain{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:14px;align-items:stretch}
+  .chain .arrow{align-self:center;color:var(--honey);font-size:1.5rem}
+  .receipt{background:#170F09;border:1px solid #4A3B26;border-radius:14px;padding:20px}
+  .receipt .lbl{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:var(--honey);font-weight:700}
+  .receipt code{display:block;font-family:var(--mono);font-size:.72rem;color:#E8DCC4;word-break:break-all;margin-top:10px;line-height:1.5}
+  .receipt .who{margin-top:12px;font-size:.85rem;color:#B8A98E}
+  .proof .verify{margin-top:30px;font-size:.95rem;color:#C9BBA0}
+  .proof .verify code{font-family:var(--mono);font-size:.82rem;color:var(--amber-glow)}
+
+  /* ---------- footer ---------- */
+  footer{background:var(--propolis);color:#B8A98E;padding:44px 0;font-size:.9rem}
+  footer .disc{border:1px solid #4A3B26;border-radius:12px;padding:18px 22px;color:var(--wax);background:#170F09;margin-bottom:26px}
+  footer .disc b{color:var(--honey)}
+  footer .sig{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  @media (max-width:900px){
+    .hero .wrap{grid-template-columns:1fr;min-height:auto}
+    .scanlab{max-width:380px}
+    .step-grid,.lane-grid{grid-template-columns:1fr}
+    .chain{grid-template-columns:1fr}
+    .chain .arrow{transform:rotate(90deg);justify-self:center}
+  }
+  @media (prefers-reduced-motion:reduce){ .rm-note{display:none} }
+  .btn:focus-visible,a:focus-visible{outline:3px solid var(--honey);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">OpenDiabetic · The Digital Foot Lab</div>
+      <h1>Check your feet.<br><em>Keep your data.</em></h1>
+      <p class="lede">A free, guided foot check for people living with diabetes.
+      Take two photos. Learn what's worth watching. Your images are analyzed
+      in memory and destroyed the moment your result returns — we couldn't
+      keep them if we tried.</p>
+      <div class="cta-row">
+        <a class="btn btn-honey" href="#start">Start a foot check</a>
+        <a class="btn btn-ghost" href="/transparency">Read the proof</a>
+      </div>
+      <div class="hero-badges">
+        <span>Free forever</span>
+        <span>Never stored</span>
+        <span>Never diagnoses</span>
+        <span>Runs on our hardware — or yours</span>
+      </div>
+    </div>
+    <div>
+      <div class="scanlab" role="img" aria-label="Two foot scans: the top of the foot and the sole, each swept by a scan line. The sole highlights zones where ulcers commonly form.">
+        <div class="scanpanel">
+          <div class="scanlabel">TOP SCAN</div>
+          <svg viewBox="0 0 220 440" class="footsvg">
+            <path d="M 60 72 C 56 40, 94 32, 97 64 C 100 46, 126 44, 128 64
+              C 132 48, 152 50, 153 66 C 157 54, 172 56, 172 71
+              C 176 62, 188 66, 186 80 C 192 112, 180 150, 173 195
+              C 167 240, 160 280, 150 318 C 143 348, 139 370, 137 388
+              C 130 402, 92 402, 85 388 C 78 358, 72 318, 67 268
+              C 62 218, 57 140, 60 72 Z"
+              fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <path d="M 97 64 L 98 78 M 128 64 L 128 77 M 153 66 L 152 78 M 172 71 L 170 82"
+              stroke="#E9A63C" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="77" cy="52" rx="9" ry="7" fill="none" stroke="#E9A63C" stroke-width="1.5" opacity=".7"/>
+            <ellipse cx="112" cy="55" rx="5.5" ry="4.5" fill="none" stroke="#E9A63C" stroke-width="1.5" opacity=".7"/>
+            <ellipse cx="140" cy="58" rx="5" ry="4" fill="none" stroke="#E9A63C" stroke-width="1.5" opacity=".7"/>
+            <ellipse cx="162" cy="64" rx="4.5" ry="3.5" fill="none" stroke="#E9A63C" stroke-width="1.5" opacity=".7"/>
+            <ellipse cx="179" cy="74" rx="4" ry="3" fill="none" stroke="#E9A63C" stroke-width="1.5" opacity=".7"/>
+            <ellipse cx="111" cy="396" rx="27" ry="10" fill="none" stroke="#E9A63C" stroke-width="2" opacity=".5"/>
+            <path d="M 90 120 C 95 200, 100 280, 103 360 M 125 118 C 124 200, 120 280, 116 360 M 150 122 C 143 195, 136 265, 128 340"
+              stroke="#E9A63C" stroke-width="1.2" fill="none" opacity=".22"/>
+            <g class="scanline"><rect x="20" y="-5" width="180" height="10" rx="5" fill="url(#scanGrad)"/></g>
+          </svg>
+          <div class="scancap">Skin, nails, shape</div>
+        </div>
+        <div class="scanpanel">
+          <div class="scanlabel">BOTTOM SCAN</div>
+          <svg viewBox="0 0 220 440" class="footsvg">
+            <defs>
+              <linearGradient id="scanGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#E9A63C" stop-opacity="0"/>
+                <stop offset=".5" stop-color="#FFC96B" stop-opacity=".95"/>
+                <stop offset="1" stop-color="#E9A63C" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <path d="M 60 165 C 55 120, 75 100, 110 98 C 145 96, 168 115, 172 150
+              C 176 185, 170 215, 166 250 C 162 285, 160 315, 158 345
+              C 156 385, 130 405, 108 405 C 86 405, 66 388, 66 352
+              C 66 320, 80 300, 84 268 C 88 240, 72 205, 60 165 Z"
+              fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <ellipse cx="72" cy="62" rx="20" ry="24" fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <ellipse cx="106" cy="50" rx="13" ry="15" fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <ellipse cx="132" cy="54" rx="12" ry="14" fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <ellipse cx="154" cy="62" rx="11" ry="13" fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <ellipse cx="172" cy="74" rx="9" ry="11" fill="#2B1F15" stroke="#E9A63C" stroke-width="3"/>
+            <!-- ulcer-prone pressure zones: big toe, ball (1st & 5th met heads), heel -->
+            <g class="pzone" fill="none" stroke="#FFC96B" stroke-width="2">
+              <polygon points="72,44 88,53 88,71 72,80 56,71 56,53"/>
+              <polygon points="88,118 106,128 106,148 88,158 70,148 70,128"/>
+              <polygon points="150,124 166,133 166,151 150,160 134,151 134,133"/>
+              <polygon points="110,346 130,357 130,379 110,390 90,379 90,357"/>
+            </g>
+            <g class="scanline"><rect x="20" y="-5" width="180" height="10" rx="5" fill="url(#scanGrad)"/></g>
+          </svg>
+          <div class="scancap zonecap">⬡ Where ulcers form — we look closest here</div>
+        </div>
+      </div>
+      <p class="canvas-caption rm-note">Four photos per check: top and bottom of each foot. The scan reads each once — then it's gone.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= STEPS ================= -->
+<section class="steps">
+  <div class="wrap">
+    <div class="eyebrow">How a check works</div>
+    <h2>Three steps. About two minutes. Nothing left behind.</h2>
+    <div class="step-grid">
+      <div class="step">
+        <div class="n">1</div>
+        <h3>Capture</h3>
+        <p><b>Four photos:</b> the top and the <b>bottom of each foot</b> — ulcers form on the sole, so the bottom views matter most. Lighting and focus are checked <b>on your phone</b> before anything is analyzed.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <h3>Analyze</h3>
+        <p>A medical-grade vision model looks at the photo and reports only
+        <b>what it can see</b> — redness, dryness, swelling, nail changes —
+        in plain words. It runs on <b>your device or our machines</b>: your
+        choice, same result.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <h3>Learn</h3>
+        <p>Observations are matched to our <b>Field Guides</b>, with a
+        simple flag: green, yellow, or red. Red means one thing only —
+        <b>worth showing your care team</b>. One tap builds a <b>care
+        package PDF</b> you can send them yourself — tamper-proof, with a
+        verification fingerprint printed on it. It is never a diagnosis.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= LANES ================= -->
+<section class="lanes" id="start">
+  <div class="wrap">
+    <div class="eyebrow">Choose where it runs</div>
+    <h2>Your garage or ours. Same container, same care.</h2>
+    <p class="sub">The cloud we run is the exact software you can run at home.
+    That's not a slogan — it's the same published container image.</p>
+    <div class="lane-grid">
+      <div class="lane lane-local">
+        <div class="tag">Fully private</div>
+        <h3>On your own computer</h3>
+        <ul>
+          <li><b>Nothing leaves your home.</b> Your phone talks to your own PC over your own Wi‑Fi.</li>
+          <li>Needs a computer with a recent NVIDIA graphics card (RTX 3090 or newer).</li>
+          <li>One command to set up: <b>we publish the whole thing.</b></li>
+        </ul>
+      </div>
+      <div class="lane lane-cloud">
+        <div class="tag">Zero setup</div>
+        <h3>On our machines</h3>
+        <ul>
+          <li>Your photo travels <b>encrypted</b>, is analyzed <b>in memory only</b>, and is <b>gone</b> when your result arrives.</li>
+          <li>Our servers run <b>read‑only</b> — there is nowhere to save your photo, even by accident.</li>
+          <li>Every check leaves a <b>public receipt</b> you can verify below.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PROOF ================= -->
+<section class="proof">
+  <div class="wrap">
+    <div class="eyebrow">Don't trust us — verify</div>
+    <h2>Every check leaves a receipt. Never a photo.</h2>
+    <p class="sub">Your report is reduced to a fingerprint (a hash). Each day,
+    all fingerprints are combined and notarized twice — by a public network
+    and by an independent timestamp authority. Anyone can check either one,
+    forever. Neither contains your photo, your report, or your name.</p>
+    <div class="chain">
+      <div class="receipt">
+        <div class="lbl">Your report's fingerprint</div>
+        <code>sha256 · 5720d11baa8137ebaa1078fa23ba1c01…</code>
+        <div class="who">Returned to you with every check. Yours to keep.</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="receipt">
+        <div class="lbl">Public network receipt</div>
+        <code>Hedera consensus topic · daily batch root</code>
+        <div class="who">Readable by anyone with a link. Outlives us.</div>
+      </div>
+      <div class="arrow">+</div>
+      <div class="receipt">
+        <div class="lbl">Notary countersignature</div>
+        <code>RFC 3161 token · Status: Granted</code>
+        <div class="who">The same standard courts have accepted for decades.</div>
+      </div>
+    </div>
+    <p class="verify">Verify a receipt any time: <code>opendiabetic.com/transparency</code></p>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="wrap">
+    <div class="disc"><b>Please read:</b> This is educational monitoring — not
+    a medical device. It never diagnoses, and it never replaces your care
+    team. If something looks or feels wrong, contact your doctor or
+    podiatrist — today, not tomorrow.</div>
+    <div class="sig">
+      <span>🐝 Part of the Swarm &amp; Bee family · Jupiter, FL</span>
+      <span>build@opendiabetic.com</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

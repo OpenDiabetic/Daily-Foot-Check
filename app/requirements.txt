@@ -1,0 +1,10 @@
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+pydantic==2.*
+pydantic-settings==2.*
+httpx==0.28.*
+pillow==11.*
+numpy==2.*
+python-multipart==0.0.*
+cryptography>=43
+reportlab==4.*

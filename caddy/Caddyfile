@@ -1,0 +1,43 @@
+# footcheck edge — TLS termination on our own iron.
+# Access logs: method, path, status, duration. NO bodies, NO query strings.
+{
+	servers {
+		trusted_proxies static private_ranges
+	}
+}
+
+check.opendiabetic.com {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "no-referrer"
+		-Server
+	}
+
+	handle /v1/* {
+		reverse_proxy api:8080
+	}
+	handle /healthz {
+		reverse_proxy api:8080
+	}
+	handle /transparency {
+		reverse_proxy api:8080
+	}
+	handle {
+		root * /srv/web
+		file_server
+	}
+
+	log {
+		output stdout
+		format filter {
+			wrap json
+			fields {
+				request>headers delete
+				request>uri query delete
+			}
+		}
+	}
+}

@@ -1,0 +1,10 @@
+{
+  "_doc": "SINGLE SOURCE OF TRUTH for QC thresholds. Python (app/qc/gate.py via config) and Swift (FootLabKit/QCConstants.swift via tools/codegen_qc.py) both derive from THIS file. Never edit generated files. Bump version on any change and re-run codegen + golden-set parity test.",
+  "version": "qc.v1",
+  "min_side_px": 512,
+  "min_sharpness": 40.0,
+  "min_brightness": 40.0,
+  "max_brightness": 235.0,
+  "max_image_bytes": 12582912,
+  "luma_downscale_max_side": 1024
+}
